@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _(no unreleased changes yet)_
 
+## [2.1.0] - 2026-09-02
+
+### Added
+
+- **`update.sh`** — unattended updates to the newest tagged release,
+  and nothing else: a tag is cut only after CI has booted the pinned
+  images and passed the smoke tests, so "update to the latest tag" means
+  "update to a combination a machine has already run". It refuses to
+  cross a major version on its own (`--allow-major` after reading the
+  notes), refuses a checkout with local modifications, and supports
+  `--dry-run`. Put it on a cron timer for hands-off minor/patch updates.
+
 ## [2.0.0] - 2026-09-02
 
 ### Changed (major: Dashy 3.x → 4.x)
@@ -57,6 +69,7 @@ in [keycloak-traefik-letsencrypt-docker-compose](https://github.com/heyvaldemar/
   200 over HTTPS through Traefik.
 - `.env.example` with generation commands; `.gitignore` for `.env`.
 
-[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/releases/tag/v1.0.0
