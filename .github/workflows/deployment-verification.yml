@@ -127,20 +127,23 @@ jobs:
           exit "$status"
 
       - name: Compare pinned Dashy version against the latest release tag
+        # Docker Hub is the version source: upstream publishes patch tags
+        # (e.g. 4.6.7) there without cutting a GitHub release for each.
         run: |
           pin="$(grep -oE '\$\{DASHY_IMAGE_TAG:-[^}]+\}' dashy-traefik-letsencrypt-docker-compose.yml | head -1 | sed -E 's/^\$\{DASHY_IMAGE_TAG:-//; s/\}$//')"
           ref="${pin%%@*}"
           pinned_version="${ref##*:}"
-          latest="release-$(curl -fsSL --retry 3 -H "Authorization: Bearer $GH_API_TOKEN" https://api.github.com/repos/Lissy93/dashy/releases/latest | jq -r .tag_name)"
-          if [ "$latest" = "release-null" ] || [ "$latest" = "release-" ]; then
-            echo "::error::Could not determine the latest Dashy release from the GitHub API"
+          latest="$(curl -fsSL --retry 3 "https://hub.docker.com/v2/repositories/lissy93/dashy/tags/?page_size=100" \
+            | jq -r '.results[].name | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))' | sort -V | tail -1)"
+          if [ -z "$latest" ]; then
+            echo "::error::Could not determine the latest Dashy tag from Docker Hub"
             exit 1
           fi
           if [ "$pinned_version" != "$latest" ]; then
-            echo "::error::Dashy pin is behind: pinned ${pinned_version}, latest release is ${latest}"
+            echo "::error::Dashy pin is behind: pinned ${pinned_version}, latest tag is ${latest}"
             exit 1
           fi
-          echo "Dashy pin ${pinned_version} matches the latest release"
+          echo "Dashy pin ${pinned_version} matches the latest tag"
 
       - name: Compare pinned Traefik minor against the latest release
         run: |

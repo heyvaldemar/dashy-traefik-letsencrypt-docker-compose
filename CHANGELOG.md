@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _(no unreleased changes yet)_
 
+## [2.0.0] - 2026-09-02
+
+### Changed (major: Dashy 3.x → 4.x)
+
+- **Dashy updated to 4.6.7** (was release-3.1.15). The 4.x line is the
+  active upstream line; 3.x receives no further releases. The shipped
+  starter `config.yml` works unchanged, and in testing a 3.x-era config
+  loaded cleanly — still, skim your own `config.yml` against the
+  [Dashy 4 docs](https://dashy.to/docs/) after upgrading.
+- **Config mount moved to `/app/user-data/conf.yml`** — the path Dashy 4
+  reads. If you override the volume in your own compose file, update the
+  container-side path.
+- **`platform: linux/amd64` removed**: 4.x images are multi-arch
+  (amd64 + arm64), so ARM servers now run natively instead of under
+  emulation.
+- The freshness gate reads the newest Dashy version from Docker Hub tags
+  instead of GitHub releases — upstream publishes patch tags (such as
+  4.6.7) without cutting a GitHub release for each.
+
 ## [1.0.0] - 2026-09-02
 
 First semver release. Brings this template to the fleet standard established
@@ -38,5 +57,6 @@ in [keycloak-traefik-letsencrypt-docker-compose](https://github.com/heyvaldemar/
   200 over HTTPS through Traefik.
 - `.env.example` with generation commands; `.gitignore` for `.env`.
 
-[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/releases/tag/v1.0.0

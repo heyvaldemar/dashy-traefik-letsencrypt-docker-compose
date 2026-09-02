@@ -2,7 +2,7 @@
 
 [![Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 
-This repository deploys **Dashy** — a self-hosted dashboard for all your services — behind **Traefik** with automatic **Let's Encrypt TLS**. One `docker compose up` away from your own start page at `https://your-domain`.
+This repository deploys **Dashy 4** — a self-hosted dashboard for all your services — behind **Traefik** with automatic **Let's Encrypt TLS**. One `docker compose up` away from your own start page at `https://your-domain`.
 
 📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-dashy-using-docker-compose/](https://www.heyvaldemar.com/install-dashy-using-docker-compose/).
 
@@ -64,9 +64,7 @@ This repository is a deployment template, not a custom image. It orchestrates tw
 
 Both are pinned to `tag@sha256:<digest>` as interpolation defaults in the compose file's `x-images` block. Compose pulls by digest, not by tag, so two users deploying on different days get byte-identical image manifests — and `git pull` alone delivers the version combination this repository has tested. Setting `DASHY_IMAGE_TAG` or `TRAEFIK_IMAGE_TAG` in `.env` overrides the default when you deliberately want a different version.
 
-The daily `check-pin-freshness` CI job re-resolves each pinned tag against its registry and compares the pinned Dashy and Traefik versions against the latest upstream releases — any drift fails the run and notifies the maintainer. GitHub Actions are pinned by commit SHA with version comments; Dependabot keeps those fresh.
-
-Note: the Dashy release images are published for `linux/amd64` only, and the compose file declares that platform explicitly. On an ARM server the container runs under emulation if binfmt is set up; for native ARM, build Dashy from source.
+The daily `check-pin-freshness` CI job re-resolves each pinned tag against its registry and compares the pinned Dashy version against the newest Docker Hub tag (upstream publishes patch tags there without cutting a GitHub release for each) and the pinned Traefik version against the latest upstream release — any drift fails the run and notifies the maintainer. GitHub Actions are pinned by commit SHA with version comments; Dependabot keeps those fresh.
 
 ## Production checklist
 
