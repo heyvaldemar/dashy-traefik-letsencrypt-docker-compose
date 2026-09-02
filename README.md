@@ -98,6 +98,10 @@ This is deliberately a host-side script and not a container in the stack: an in-
 
 Every service carries memory and CPU limits plus reservations as compose-level defaults — the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
 
+## Backups
+
+Dashy has no database: `config.yml` next to the compose file *is* the dashboard, and Traefik's certificates live in the `traefik-certificates` volume and are re-issued automatically. Keep `config.yml` in your own git repository (it is the one file worth versioning), and there is nothing else to back up.
+
 ## Testing
 
 The [Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every day at 06:00 UTC: shellcheck + actionlint, a Trivy scan of each pinned image, the daily `check-pin-freshness` job, and a deploy-and-test job that boots the full stack with an ephemeral `.env`, requests real routing through Traefik, and requires the Dashy UI to answer 200 over HTTPS with the shipped `config.yml` mounted.
