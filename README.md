@@ -1,103 +1,93 @@
-# Dashy with Let's Encrypt Using Docker Compose
+# Dashy + Traefik + Let's Encrypt — Docker Compose
 
-[![Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/00-deployment-verification.yml/badge.svg)](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions)
+[![Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 
-The badge displayed on my repository indicates the status of the deployment verification workflow as executed on the latest commit to the main branch.
+This repository deploys **Dashy** — a self-hosted dashboard for all your services — behind **Traefik** with automatic **Let's Encrypt TLS**. One `docker compose up` away from your own start page at `https://your-domain`.
 
-**Passing**: This means the most recent commit has successfully passed all deployment checks, confirming that the Docker Compose setup functions correctly as designed.
+📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-dashy-using-docker-compose/](https://www.heyvaldemar.com/install-dashy-using-docker-compose/).
 
-📙 The complete installation guide is available on my [website](https://www.heyvaldemar.com/install-dashy-using-docker-compose/).
+## Getting started
 
-❗ Change variables in the `.env` to meet your requirements.
+```bash
+# 1. Clone
+git clone https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose
+cd dashy-traefik-letsencrypt-docker-compose
 
-💡 Note that the `.env` file should be in the same directory as `dashy-traefik-letsencrypt-docker-compose.yml`.
+# 2. Create the two Docker networks the stack expects
+docker network create traefik-network
+docker network create dashy-network
 
-Create networks for your services before deploying the configuration using the commands:
+# 3. Copy the environment template and fill in required values
+cp .env.example .env
+$EDITOR .env
+# ^ Required: TRAEFIK_ACME_EMAIL, TRAEFIK_HOSTNAME, TRAEFIK_BASIC_AUTH,
+#   DASHY_HOSTNAME. See .env.example for generation commands.
 
-`docker network create traefik-network`
+# 4. Put your dashboard content into config.yml (the shipped one is a starter)
+$EDITOR config.yml
 
-`docker network create dashy-network`
+# 5. Deploy
+docker compose -f dashy-traefik-letsencrypt-docker-compose.yml -p dashy up -d
+```
 
-Deploy Dashy using Docker Compose:
+Within a minute or two, `https://${DASHY_HOSTNAME}` serves your dashboard and `https://${TRAEFIK_HOSTNAME}` serves the basic-auth protected Traefik dashboard, both with fresh Let's Encrypt certificates.
 
-`docker compose -f dashy-traefik-letsencrypt-docker-compose.yml -p dashy up -d`
+### What success looks like
 
-## Author
+```bash
+docker compose -f dashy-traefik-letsencrypt-docker-compose.yml -p dashy ps
+# Expected: dashy and traefik both show "(healthy)"
 
-hey everyone,
+curl -fsS -o /dev/null -w "%{http_code}\n" "https://${DASHY_HOSTNAME}/"
+# Expected: 200
+```
 
-💾 I’ve been in the IT game for over 20 years, cutting my teeth with some big names like [IBM](https://www.linkedin.com/in/heyvaldemar/), [Thales](https://www.linkedin.com/in/heyvaldemar/), and [Amazon](https://www.linkedin.com/in/heyvaldemar/). These days, I wear the hat of a DevOps Consultant and Team Lead, but what really gets me going is Docker and container technology - I’m kind of obsessed!
+### Common first-deploy issues
 
-💛 I have my own IT [blog](https://www.heyvaldemar.com/), where I’ve built a [community](https://discord.gg/AJQGCCBcqf) of DevOps enthusiasts who share my love for all things Docker, containers, and IT technologies in general. And to make sure everyone can jump on this awesome DevOps train, I write super detailed guides (seriously, they’re foolproof!) that help even newbies deploy and manage complex IT solutions.
+- **Cert issuance fails.** DNS hasn't propagated to your server's IP yet, or port 80/443 isn't reachable from the internet. Confirm with `dig +short ${DASHY_HOSTNAME}`.
+- **`docker compose up` fails with `set in .env`.** A required variable is empty in `.env`; the error names it.
+- **Network not found.** Step 2 (the `docker network create` commands) was skipped.
+- **Dashboard shows the starter page.** That is the shipped `config.yml`. Edit it and reload — Dashy picks up changes from the UI (Config → Update) or on container restart.
 
-🚀 My dream is to empower every single person in the DevOps community to squeeze every last drop of potential out of Docker and container tech.
+### Apply `.env` or compose-file changes
 
-🐳 As a [Docker Captain](https://www.docker.com/captains/vladimir-mikhalev/), I’m stoked to share my knowledge, experiences, and a good dose of passion for the tech. My aim is to encourage learning, innovation, and growth, and to inspire the next generation of IT whizz-kids to push Docker and container tech to its limits.
+```bash
+docker compose -f dashy-traefik-letsencrypt-docker-compose.yml -p dashy up -d --force-recreate
+```
 
-Let’s do this together!
+## Supply chain trust
 
-## My 2D Portfolio
+This repository is a deployment template, not a custom image. It orchestrates two upstream images:
 
-🕹️ Click into [sre.gg](https://www.sre.gg/) — my virtual space is a 2D pixel-art portfolio inviting you to interact with elements that encapsulate the milestones of my DevOps career.
+- [`lissy93/dashy`](https://hub.docker.com/r/lissy93/dashy) — Dashy upstream
+- [`traefik`](https://hub.docker.com/_/traefik) — reverse proxy, Docker Hub official image
 
-## My Courses
+Both are pinned to `tag@sha256:<digest>` as interpolation defaults in the compose file's `x-images` block. Compose pulls by digest, not by tag, so two users deploying on different days get byte-identical image manifests — and `git pull` alone delivers the version combination this repository has tested. Setting `DASHY_IMAGE_TAG` or `TRAEFIK_IMAGE_TAG` in `.env` overrides the default when you deliberately want a different version.
 
-🎓 Dive into my [comprehensive IT courses](https://www.heyvaldemar.com/courses/) designed for enthusiasts and professionals alike. Whether you're looking to master Docker, conquer Kubernetes, or advance your DevOps skills, my courses provide a structured pathway to enhancing your technical prowess.
+The daily `check-pin-freshness` CI job re-resolves each pinned tag against its registry and compares the pinned Dashy and Traefik versions against the latest upstream releases — any drift fails the run and notifies the maintainer. GitHub Actions are pinned by commit SHA with version comments; Dependabot keeps those fresh.
 
-🔑 [Each course](https://www.udemy.com/user/heyvaldemar/) is built from the ground up with real-world scenarios in mind, ensuring that you gain practical knowledge and hands-on experience. From beginners to seasoned professionals, there's something here for everyone to elevate their IT skills.
+Note: the Dashy release images are published for `linux/amd64` only, and the compose file declares that platform explicitly. On an ARM server the container runs under emulation if binfmt is set up; for native ARM, build Dashy from source.
 
-## My Services
+## Production checklist
 
-💼 Take a look at my [service catalog](https://www.heyvaldemar.com/services/) and find out how we can make your technological life better. Whether it's increasing the efficiency of your IT infrastructure, advancing your career, or expanding your technological horizons — I'm here to help you achieve your goals. From DevOps transformations to building gaming computers — let's make your technology unparalleled!
+- [ ] **Generate your own `TRAEFIK_BASIC_AUTH` hash** — never deploy the example value from a guide.
+- [ ] **Treat `config.yml` as data worth backing up** — it *is* your dashboard. Keep it in your own git repo or backup rotation.
+- [ ] **Verify Let's Encrypt cert issuance.** Watch `docker compose -p dashy logs traefik -f` on first start for `Adding certificate for domain(s)`.
+- [ ] **Lock down the Traefik dashboard.** Basic auth is basic. Consider Traefik's `IPAllowList` middleware or not exposing the dashboard publicly at all.
+- [ ] **If your dashboard links to internal services, keep Dashy internal too** — a public start page enumerates your infrastructure for anyone who finds it.
 
-## Patreon Exclusives
+## Testing
 
-🏆 Join my [Patreon](https://www.patreon.com/heyvaldemar) and dive deep into the world of Docker and DevOps with exclusive content tailored for IT enthusiasts and professionals. As your experienced guide, I offer a range of membership tiers designed to suit everyone from newbies to IT experts.
+The [Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml?query=branch%3Amain) workflow runs on every push, pull request, and every day at 06:00 UTC: shellcheck + actionlint, a Trivy scan of each pinned image, the daily `check-pin-freshness` job, and a deploy-and-test job that boots the full stack with an ephemeral `.env`, requests real routing through Traefik, and requires the Dashy UI to answer 200 over HTTPS with the shipped `config.yml` mounted.
 
-## My Recommendations
+---
 
-📕 Check out my collection of [essential DevOps books](https://kit.co/heyvaldemar/essential-devops-books)\
-🖥️ Check out my [studio streaming and recording kit](https://kit.co/heyvaldemar/my-studio-streaming-and-recording-kit)\
-📡 Check out my [streaming starter kit](https://kit.co/heyvaldemar/streaming-starter-kit)
-
-## Follow Me
-
-🎬 [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1)\
-🐦 [X / Twitter](https://twitter.com/heyvaldemar)\
-🎨 [Instagram](https://www.instagram.com/heyvaldemar/)\
-🐘 [Mastodon](https://mastodon.social/@heyvaldemar)\
-🧵 [Threads](https://www.threads.net/@heyvaldemar)\
-🎸 [Facebook](https://www.facebook.com/heyvaldemarFB/)\
-🧊 [Bluesky](https://bsky.app/profile/heyvaldemar.bsky.social)\
-🎥 [TikTok](https://www.tiktok.com/@heyvaldemar)\
-💻 [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)\
-📣 [daily.dev Squad](https://app.daily.dev/squads/devopscompass)\
-🧩 [LeetCode](https://leetcode.com/u/heyvaldemar/)\
-🐈 [GitHub](https://github.com/heyvaldemar)
-
-## Community of IT Experts
-
-👾 [Discord](https://discord.gg/AJQGCCBcqf)
-
-## Refill My Coffee Supplies
-
-💖 [PayPal](https://www.paypal.com/paypalme/heyvaldemarCOM)\
-🏆 [Patreon](https://www.patreon.com/heyvaldemar)\
-💎 [GitHub](https://github.com/sponsors/heyvaldemar)\
-🥤 [BuyMeaCoffee](https://www.buymeacoffee.com/heyvaldemar)\
-🍪 [Ko-fi](https://ko-fi.com/heyvaldemar)
-
-🌟 **Bitcoin (BTC):** bc1q2fq0k2lvdythdrj4ep20metjwnjuf7wccpckxc\
-🔹 **Ethereum (ETH):** 0x76C936F9366Fad39769CA5285b0Af1d975adacB8\
-🪙 **Binance Coin (BNB):** bnb1xnn6gg63lr2dgufngfr0lkq39kz8qltjt2v2g6\
-💠 **Litecoin (LTC):** LMGrhx8Jsx73h1pWY9FE8GB46nBytjvz8g
+## About the maintainer
 
 <div align="center">
 
-### Show some 💜 by starring some of the [repositories](https://github.com/heyValdemar?tab=repositories)!
+**Maintained by [Vladimir Mikhalev](https://github.com/heyvaldemar)** — Docker Captain · IBM Champion · AWS Community Builder
 
-![octocat](https://user-images.githubusercontent.com/10498744/210113490-e2fad07f-4488-4da8-a656-b9abbdd8cb26.gif)
+[YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1) · [Blog](https://heyvaldemar.com) · [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)
 
 </div>
-
-![footer](https://user-images.githubusercontent.com/10498744/210157572-1fca0242-8af2-46a6-bfa3-666ffd40ebde.svg)
