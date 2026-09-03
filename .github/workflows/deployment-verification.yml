@@ -130,7 +130,7 @@ jobs:
         # Docker Hub is the version source: upstream publishes patch tags
         # (e.g. 4.6.7) there without cutting a GitHub release for each.
         run: |
-          pin="$(grep -oE '\$\{DASHY_IMAGE_TAG:-[^}]+\}' dashy-traefik-letsencrypt-docker-compose.yml | head -1 | sed -E 's/^\$\{DASHY_IMAGE_TAG:-//; s/\}$//')"
+          pin="$(grep -m1 -oE '\$\{DASHY_IMAGE_TAG:-.*' dashy-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
           ref="${pin%%@*}"
           pinned_version="${ref##*:}"
           latest="$(curl -fsSL --retry 3 "https://hub.docker.com/v2/repositories/lissy93/dashy/tags/?page_size=100" \
@@ -147,7 +147,7 @@ jobs:
 
       - name: Compare pinned Traefik minor against the latest release
         run: |
-          pin="$(grep -oE '\$\{TRAEFIK_IMAGE_TAG:-[^}]+\}' dashy-traefik-letsencrypt-docker-compose.yml | head -1 | sed -E 's/^\$\{TRAEFIK_IMAGE_TAG:-//; s/\}$//')"
+          pin="$(grep -m1 -oE '\$\{TRAEFIK_IMAGE_TAG:-.*' dashy-traefik-letsencrypt-docker-compose.yml | sed -E -e ':a' -e 's/\$\{[A-Z_]+:-([^{}]*)\}/\1/' -e 'ta')"
           ref="${pin%%@*}"
           pinned_minor="${ref##*:}"
           latest="$(curl -fsSL --retry 3 -H "Authorization: Bearer $GH_API_TOKEN" https://api.github.com/repos/traefik/traefik/releases/latest | jq -r .tag_name)"
