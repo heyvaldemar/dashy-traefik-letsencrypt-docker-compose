@@ -25,6 +25,10 @@ _(no unreleased changes yet)_
   `docker compose up` fails with an invalid reference instead of
   deploying something unexpected.
 
+### Changed
+
+- `lissy93/dashy` 4.6.7 to 4.6.9.
+
 ## [2.3.0] - 2026-09-02
 
 ### Security
