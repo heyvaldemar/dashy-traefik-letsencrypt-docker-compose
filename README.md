@@ -1,8 +1,8 @@
-# Dashy + Traefik + Let's Encrypt — Docker Compose
+# Dashy + Traefik + Let's Encrypt on Docker Compose
 
 [![Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 
-This repository deploys **Dashy 4** — a self-hosted dashboard for all your services — behind **Traefik** with automatic **Let's Encrypt TLS**. One `docker compose up` away from your own start page at `https://your-domain`.
+This repository deploys **Dashy 4** (a self-hosted dashboard for all your services) behind **Traefik** with automatic **Let's Encrypt TLS**. One `docker compose up` away from your own start page at `https://your-domain`.
 
 📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-dashy-using-docker-compose/](https://www.heyvaldemar.com/install-dashy-using-docker-compose/).
 
@@ -47,7 +47,7 @@ curl -fsS -o /dev/null -w "%{http_code}\n" "https://${DASHY_HOSTNAME}/"
 - **Cert issuance fails.** DNS hasn't propagated to your server's IP yet, or port 80/443 isn't reachable from the internet. Confirm with `dig +short ${DASHY_HOSTNAME}`.
 - **`docker compose up` fails with `set in .env`.** A required variable is empty in `.env`; the error names it.
 - **Network not found.** Step 2 (the `docker network create` commands) was skipped.
-- **Dashboard shows the starter page.** That is the shipped `config.yml`. Edit it and reload — Dashy picks up changes from the UI (Config → Update) or on container restart.
+- **Dashboard shows the starter page.** That is the shipped `config.yml`. Edit it and reload. Dashy picks up changes from the UI (Config → Update) or on container restart.
 
 ### Apply `.env` or compose-file changes
 
@@ -59,20 +59,20 @@ docker compose -f dashy-traefik-letsencrypt-docker-compose.yml -p dashy up -d --
 
 This repository is a deployment template, not a custom image. It orchestrates two upstream images:
 
-- [`lissy93/dashy`](https://hub.docker.com/r/lissy93/dashy) — Dashy upstream
-- [`traefik`](https://hub.docker.com/_/traefik) — reverse proxy, Docker Hub official image
+- [`lissy93/dashy`](https://hub.docker.com/r/lissy93/dashy): Dashy upstream
+- [`traefik`](https://hub.docker.com/_/traefik): reverse proxy, Docker Hub official image
 
-Both are pinned to `tag@sha256:<digest>` as interpolation defaults in the compose file's `x-images` block. Compose pulls by digest, not by tag, so two users deploying on different days get byte-identical image manifests — and `git pull` alone delivers the version combination this repository has tested. Setting `DASHY_IMAGE_TAG` or `TRAEFIK_IMAGE_TAG` in `.env` overrides the default when you deliberately want a different version.
+Both are pinned to `tag@sha256:<digest>` as interpolation defaults in the compose file's `x-images` block. Compose pulls by digest, not by tag, so two users deploying on different days get byte-identical image manifests. And `git pull` alone delivers the version combination this repository has tested. Setting `DASHY_IMAGE_TAG` or `TRAEFIK_IMAGE_TAG` in `.env` overrides the default when you deliberately want a different version.
 
-The daily `check-pin-freshness` CI job re-resolves each pinned tag against its registry and compares the pinned Dashy version against the newest Docker Hub tag (upstream publishes patch tags there without cutting a GitHub release for each) and the pinned Traefik version against the latest upstream release — any drift fails the run and notifies the maintainer. GitHub Actions are pinned by commit SHA with version comments; Dependabot keeps those fresh.
+The daily `check-pin-freshness` CI job re-resolves each pinned tag against its registry and compares the pinned Dashy version against the newest Docker Hub tag (upstream publishes patch tags there without cutting a GitHub release for each) and the pinned Traefik version against the latest upstream release. Any drift fails the run and notifies the maintainer. GitHub Actions are pinned by commit SHA with version comments; Dependabot keeps those fresh.
 
 ## Production checklist
 
-- [ ] **Generate your own `TRAEFIK_BASIC_AUTH` hash** — never deploy the example value from a guide.
-- [ ] **Treat `config.yml` as data worth backing up** — it *is* your dashboard. Keep it in your own git repo or backup rotation.
+- [ ] **Generate your own `TRAEFIK_BASIC_AUTH` hash**: never deploy the example value from a guide.
+- [ ] **Treat `config.yml` as data worth backing up**: it *is* your dashboard. Keep it in your own git repo or backup rotation.
 - [ ] **Verify Let's Encrypt cert issuance.** Watch `docker compose -p dashy logs traefik -f` on first start for `Adding certificate for domain(s)`.
 - [ ] **Lock down the Traefik dashboard.** Basic auth is basic. Consider Traefik's `IPAllowList` middleware or not exposing the dashboard publicly at all.
-- [ ] **If your dashboard links to internal services, keep Dashy internal too** — a public start page enumerates your infrastructure for anyone who finds it.
+- [ ] **If your dashboard links to internal services, keep Dashy internal too**: a public start page enumerates your infrastructure for anyone who finds it.
 
 ## Unattended updates
 
@@ -90,13 +90,13 @@ Put it on a timer for hands-off minor/patch updates:
 17 5 * * *  /opt/dashy-traefik-letsencrypt-docker-compose/update.sh >> /var/log/dashy-update.log 2>&1
 ```
 
-The script refuses to cross a MAJOR template version on its own — majors are breaking by definition and their release notes exist to be read. After reading them, `./update.sh --allow-major` performs the jump. It also refuses to touch a checkout with local modifications: your customization belongs in `.env`, which updates never overwrite.
+The script refuses to cross a MAJOR template version on its own: majors are breaking by definition and their release notes exist to be read. After reading them, `./update.sh ‑‑allow-major` performs the jump. It also refuses to touch a checkout with local modifications: your customization belongs in `.env`, which updates never overwrite.
 
 This is deliberately a host-side script and not a container in the stack: an in-stack updater needs the Docker socket (root on the host) and turns "someone pushed to a repo" into "someone deployed to your machine" with no operator in the loop. A cron job under your own user updates only to tagged, CI-verified states and leaves the trust boundary where it was.
 
 ## Resource limits
 
-Every service carries memory and CPU limits plus reservations as compose-level defaults — the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
+Every service carries memory and CPU limits plus reservations as compose-level defaults: the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> ‑‑format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
 
 ## Backups
 
@@ -116,7 +116,7 @@ The [Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letse
 
 <div align="center">
 
-**Maintained by [Vladimir Mikhalev](https://github.com/heyvaldemar)** — Docker Captain · IBM Champion · AWS Community Builder
+**Maintained by [Vladimir Mikhalev](https://github.com/heyvaldemar)** · Docker Captain · IBM Champion · AWS Community Builder
 
 [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1) · [Blog](https://heyvaldemar.com) · [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)
 
