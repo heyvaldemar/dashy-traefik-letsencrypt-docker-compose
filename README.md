@@ -2,7 +2,7 @@
 
 [![Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 
-This repository deploys **Dashy 4** (a self-hosted dashboard for all your services) behind **Traefik** with automatic **Let's Encrypt TLS**. One `docker compose up` away from your own start page at `https://your-domain`.
+This repository deploys Dashy 4 (a self-hosted dashboard for all your services) behind Traefik with automatic Let's Encrypt TLS. One `docker compose up` away from your own start page at `https://your-domain`.
 
 📙 Full narrative installation guide on the blog: [heyvaldemar.com/install-dashy-using-docker-compose/](https://www.heyvaldemar.com/install-dashy-using-docker-compose/).
 
