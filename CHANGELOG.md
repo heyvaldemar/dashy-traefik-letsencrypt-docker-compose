@@ -7,19 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.4.1] - 2026-09-07
+
 ### Changed
 
+- **`update.sh` names any new required variable before it moves.** An update can add a required variable; `docker compose up` used to stop on it after the checkout, with the tree already on the new tag. The script now lists the variables that appeared in `.env.example` since your version and refuses, before anything has moved, when a required one is not in your `.env`. Names only, never values.
 - **`lissy93/dashy:4.6.9` moved to `lissy93/dashy:4.6.13`** (automated: the freshness check reported the lag, the deploy job booted the stack on the new image before this landed).
 
-## [2.4.0] - 2026-09-03
-
-### Added
-
-- **Per-image version overrides.** Every pin in the `x-images` block is
-  now `${<PREFIX>_IMAGE_TAG:-repo:${<PREFIX>_IMAGE_VERSION:-tag@sha256:digest}}`.
-  Set `<PREFIX>_IMAGE_VERSION` in `.env` to run a different version of one
-  image while every other pin stays as tested (Compose pulls that tag
-  without a digest), or `<PREFIX>_IMAGE_TAG` to replace the whole
+le
   reference as before. A deployment that sets neither is unchanged. The
   freshness job, the Trivy matrix and the fleet digest automation resolve
   the nested default before reading a pin. Needs Docker Compose v2.5 or
@@ -119,7 +116,8 @@ in [keycloak-traefik-letsencrypt-docker-compose](https://github.com/heyvaldemar/
   200 over HTTPS through Traefik.
 - `.env.example` with generation commands; `.gitignore` for `.env`.
 
-[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.1...HEAD
+[2.4.1]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.1.0...v2.2.0
