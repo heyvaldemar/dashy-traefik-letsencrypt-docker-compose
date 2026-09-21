@@ -6,8 +6,8 @@
 # CI (Trivy scans, check-pin-freshness, the ephemeral test .env) reads
 # the pins from these lines — this block is the single source of truth.
 x-images:
-  traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:${TRAEFIK_IMAGE_VERSION:-3.7@sha256:f86a2cab1b5c649070c49f883c743dd32d8485a56e3368c5f93b9e91f1e91259}}
-  dashy: &dashy-image ${DASHY_IMAGE_TAG:-lissy93/dashy:${DASHY_IMAGE_VERSION:-4.6.14@sha256:56796f06f6ddba14354d4bab3dc3576535c012f60ec664975ac8672070c5e826}}
+  traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:${TRAEFIK_IMAGE_VERSION:-3.7@sha256:24841fe2de7304c149343d877d2923b4c8800a38ba015dea9174c23b20e344a0}}
+  dashy: &dashy-image ${DASHY_IMAGE_TAG:-lissy93/dashy:${DASHY_IMAGE_VERSION:-4.7.3@sha256:9cdd818ba2abb4b3d64cddfc59ad2fcc44c01fe6eb1100e2d986dd100ad017ef}}
 
 networks:
   dashy-network:
