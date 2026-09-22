@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Changed
+
+- **`lissy93/dashy:4.7.5` moved to `lissy93/dashy:4.7.7`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
 
 ## [2.4.5] - 2026-09-22
 
