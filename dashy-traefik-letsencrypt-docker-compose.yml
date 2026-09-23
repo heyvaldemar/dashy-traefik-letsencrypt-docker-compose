@@ -73,6 +73,8 @@ services:
     depends_on:
       traefik:
         condition: service_healthy
+    # Back up on its own after a reboot or a crash.
+    restart: unless-stopped
 
   traefik:
     image: *traefik-image
