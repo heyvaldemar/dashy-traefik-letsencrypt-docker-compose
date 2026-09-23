@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`lissy93/dashy:4.7.5` moved to `lissy93/dashy:4.7.7`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
 
+  Upstream's notes for 4.7.7 carry a line worth reading twice — "Use UID/GID=1000
+  instead of node as default" — and upstream added documentation for overriding
+  `--user` because of it. Asked of the images instead of the notes, nothing
+  changes for this deployment: 4.7.5 declares `User=node` and runs as
+  `uid=1000(node) gid=1000(node)`; 4.7.7 declares `User=1000:1000` and runs as
+  `uid=1000(node) gid=1000(node)`. The same two numbers, written differently.
+  The bind-mounted `./config.yml` needs no `chown`, and this compose file sets no
+  `user:` override. If you added one, yours is the deployment that note is about.
+
 ## [2.4.5] - 2026-09-22
 
 ### Changed
