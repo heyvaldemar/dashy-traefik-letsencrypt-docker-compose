@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **The freshness check has its own workflow, Pin Freshness.** It ran inside Deployment Verification, whose badge is the one at the top of this README. Across the fleet, nine red runs in ten were a pin one version behind - which the fleet's triage moves within the day - and a reader cannot tell that from a stack that does not boot. The badge now says whether the stack boots. The job itself is unchanged.
+- **Checked daily, as the security policy already said.** This template's schedule was weekly while its SECURITY.md said the pins are re-resolved daily, and nothing recorded a reason for the difference. It now runs daily like the rest of the fleet.
 - **`lissy93/dashy:4.7.5` moved to `lissy93/dashy:4.7.7`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
 
   Upstream's notes for 4.7.7 carry a line worth reading twice — "Use UID/GID=1000
