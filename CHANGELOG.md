@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.4.6] - 2026-09-23
+
 ### Fixed
 
 - **Dashy stayed down after a host reboot.** The application service had no restart policy while Traefik did, so after a reboot the proxy returned and answered for a dashboard that was not running. It now restarts on its own.
