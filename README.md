@@ -1,6 +1,7 @@
 # Dashy + Traefik + Let's Encrypt on Docker Compose
 
 [![Deployment Verification](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14882/badge)](https://www.bestpractices.dev/projects/14882)
 
 This repository deploys Dashy 4 (a self-hosted dashboard for all your services) behind Traefik with automatic Let's Encrypt TLS. One `docker compose up` away from your own start page at `https://your-domain`.
 
