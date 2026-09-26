@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.5.0] - 2026-09-26
+
 ### Added
 
 - **Traefik's timeouts on the HTTPS entry point can be set from `.env`.**
@@ -186,7 +190,8 @@ in [keycloak-traefik-letsencrypt-docker-compose](https://github.com/heyvaldemar/
   200 over HTTPS through Traefik.
 - `.env.example` with generation commands; `.gitignore` for `.env`.
 
-[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.5...HEAD
+[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.8...v2.5.0
 [2.4.5]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.4...v2.4.5
 [2.4.4]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.3...v2.4.4
 [2.4.3]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.4.2...v2.4.3
