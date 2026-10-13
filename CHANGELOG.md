@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.5.8] - 2026-10-13
+
 ### Fixed
 
 - `.env.example` names Dashy 4.8.2, the version the compose file pins, in both commented overrides. It still said 4.6.7: each pin refresh rewrites the example only where it names the version being moved off, and this one had fallen behind before that rule existed.
@@ -251,7 +255,8 @@ in [keycloak-traefik-letsencrypt-docker-compose](https://github.com/heyvaldemar/
   200 over HTTPS through Traefik.
 - `.env.example` with generation commands; `.gitignore` for `.env`.
 
-[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.7...HEAD
+[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.8...HEAD
+[2.5.8]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.7...v2.5.8
 [2.5.7]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.6...v2.5.7
 [2.5.6]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.5...v2.5.6
 [2.5.5]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.4...v2.5.5
