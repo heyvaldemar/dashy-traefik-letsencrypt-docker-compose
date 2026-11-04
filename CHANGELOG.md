@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [2.5.23] - 2026-11-04
+
 ### Changed
 
 - **`lissy93/dashy:4.9.12` moved to `lissy93/dashy:4.9.15`.** The freshness check reported the lag; the deploy job booted the stack on the new image before this landed.
@@ -357,7 +361,8 @@ in [keycloak-traefik-letsencrypt-docker-compose](https://github.com/heyvaldemar/
   200 over HTTPS through Traefik.
 - `.env.example` with generation commands; `.gitignore` for `.env`.
 
-[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.22...HEAD
+[Unreleased]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.23...HEAD
+[2.5.23]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.22...v2.5.23
 [2.5.22]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.21...v2.5.22
 [2.5.21]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.20...v2.5.21
 [2.5.20]: https://github.com/heyvaldemar/dashy-traefik-letsencrypt-docker-compose/compare/v2.5.19...v2.5.20
