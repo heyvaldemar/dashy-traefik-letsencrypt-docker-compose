@@ -7,7 +7,7 @@
 # the pins from these lines — this block is the single source of truth.
 x-images:
   traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:${TRAEFIK_IMAGE_VERSION:-3.7@sha256:649c6476d4c499de84572bc60f5ecf75e98e75a5b8f8a8a72010c836d8ee9f95}}
-  dashy: &dashy-image ${DASHY_IMAGE_TAG:-lissy93/dashy:${DASHY_IMAGE_VERSION:-4.10.2@sha256:f998e7959e338bf29e74d0a24a5d30ad0e98568dffb43af0ce24fd9b9c4c958d}}
+  dashy: &dashy-image ${DASHY_IMAGE_TAG:-lissy93/dashy:${DASHY_IMAGE_VERSION:-4.10.3@sha256:84f10e0d4fd2ec1480bfd29dd5af39afe08162c57a4b24e84f221f48ac6f9c0a}}
 
 networks:
   dashy-network:
